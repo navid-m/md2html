@@ -1,0 +1,8 @@
+SPECTRE_LANGUAGE_REFERENCE.md
+lib/
+s-out/
+*.md
+*.html
+*-dev
+out.ssa
+
