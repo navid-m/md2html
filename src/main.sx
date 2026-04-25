@@ -411,7 +411,7 @@ fn render_inline(src: ref char) ref void = {
                     i = found_close + 2
                 } else {
                     string.StringBuilder.append_char(sb, c0)
-                    i = i + 1
+                    i++
                 }
             } else {
                 val j: mut i64 = i + 1
@@ -441,7 +441,7 @@ fn render_inline(src: ref char) ref void = {
                     i = found_close + 1
                 } else {
                     string.StringBuilder.append_char(sb, c0)
-                    i = i + 1
+                    i++
                 }
             }
         } elif c0 == 96 {  // '`' inline code
@@ -472,7 +472,7 @@ fn render_inline(src: ref char) ref void = {
                 i = found_close + 1
             } else {
                 string.StringBuilder.append_char(sb, c0)
-                i = i + 1
+                i++
             }
         } elif c0 == 91 { // '[' — possible link [text](url)
             val j: mut i64 = i + 1
@@ -531,23 +531,22 @@ fn render_inline(src: ref char) ref void = {
                         trust @free(escaped_url)
                         i = close_paren + 1
                     } else {
-                        // not a valid link — emit escaped char
                         val esc: ref void = html_escape_char(c0)
                         string.StringBuilder.append(sb, esc)
                         trust @free(esc)
-                        i = i + 1
+                        i++
                     }
                 } else {
                     val esc: ref void = html_escape_char(c0)
                     string.StringBuilder.append(sb, esc)
                     trust @free(esc)
-                    i = i + 1
+                    i++
                 }
             } else {
                 val esc: ref void = html_escape_char(c0)
                 string.StringBuilder.append(sb, esc)
                 trust @free(esc)
-                i = i + 1
+                i++
             }
         } else {
             if c0 == 60 {
@@ -559,7 +558,7 @@ fn render_inline(src: ref char) ref void = {
             } else {
                 string.StringBuilder.append_char(sb, c0)
             }
-            i = i + 1
+            i++
         }
     }
 
@@ -720,7 +719,7 @@ fn is_blank(line: ref char) bool = {
                 }
             }
         }
-        i = i + 1
+        i++
     }
     return true
 }
@@ -825,22 +824,22 @@ fn convert(lines: list[ref char]) void = {
                 emit_cstr("\"><code>")
                 trust @free(lang_esc)
             }
-            i = i + 1
+            i++
         } elif state == STATE_PRE {
             val esc: ref void = html_escape(line)
             emit(esc)
             trust @free(esc)
             emit_cstr("\n")
-            i = i + 1
+            i++
         } elif is_blank(line) {
             close_block(state)
             state = STATE_NORMAL
-            i = i + 1
+            i++
         } elif is_hr(line) {
             close_block(state)
             state = STATE_NORMAL
             emit_cstr("<hr>\n")
-            i = i + 1
+            i++
         } else {
             val hlevel: i32 = heading_level(line)
             if hlevel > 0 {
@@ -872,7 +871,7 @@ fn convert(lines: list[ref char]) void = {
                     emit_cstr("</h3>\n")
                 }
                 trust @free(rendered)
-                i = i + 1
+                i++
             } elif is_list_item(line) {
                 if state != STATE_UL {
                     close_block(state)
@@ -887,7 +886,7 @@ fn convert(lines: list[ref char]) void = {
                 emit(rendered)
                 emit_cstr("</li>\n")
                 trust @free(rendered)
-                i = i + 1
+                i++
             } elif is_blockquote(line) {
                 if state != STATE_BLOCKQUOTE {
                     close_block(state)
@@ -903,7 +902,7 @@ fn convert(lines: list[ref char]) void = {
                 emit(rendered)
                 emit_cstr(" ")
                 trust @free(rendered)
-                i = i + 1
+                i++
             } else {
                 // Paragraph text
                 if state != STATE_PARA {
@@ -916,7 +915,7 @@ fn convert(lines: list[ref char]) void = {
                 val rendered: ref void = render_inline(line)
                 emit(rendered)
                 trust @free(rendered)
-                i = i + 1
+                i++
             }
         }
     }
