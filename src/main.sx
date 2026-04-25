@@ -11,6 +11,32 @@ extern (C) fn rewind(fp: ref void) void! = "rewind"
 extern (C) fn exit(code: i32) void! = "exit"
 extern (C) fn fflush(fp: ref void) i32! = "fflush"
 extern (C) fn isdigit(c: i32) i32! = "isdigit"
+extern (C) fn stat(path: ref char, buf: ref void) i32! = "stat"
+extern (C) fn localtime(timer: ref i64) ref void! = "localtime"
+extern (C) fn strftime(buf: ref char, max: usize, fmt: ref char, tm: ref void) usize! = "strftime"
+
+when linux {
+    extern type Stat = {
+        st_dev:     u64
+        st_ino:     u64
+        st_nlink:   u64
+        st_mode:    u32
+        st_uid:     u32
+        st_gid:     u32
+        __pad0:     i32
+        st_rdev:    u64
+        st_size:    i64
+        st_blksize: i64
+        st_blocks:  i64
+        st_atime:   i64
+        st_atime_nsec: i64
+        st_mtime:   i64
+        st_mtime_nsec: i64
+        st_ctime:   i64
+        st_ctime_nsec: i64
+        __unused:   [3]i64
+    }
+}
 
 val HTML_HEAD_1: ref char = \\ <!DOCTYPE html>
                             \\ <html lang="en">
@@ -975,6 +1001,214 @@ fn make_title(path: ref char) ref char = {
     val r: ref char = trust string.cstr(result)
     return r
 }
+val fs = use("std/fs")
+
+/// Extract leading integer from a filename like "3 - foo.md". Returns -1 if none.
+fn parse_leading_num(name: ref char) i64 = {
+    val len: i64 = string.len_raw(name)
+    if len == 0 { return -1 }
+    val result: mut i64 = 0
+    val found: mut i32 = 0
+    val i: mut i64 = 0
+    for {
+        if i >= len { break }
+        val cb = string.byte_at(name, i)
+        val c: mut u8 = 0
+        match cb {
+            none   => { break }
+            some v => { c = v }
+        }
+        val is_dig: i32 = trust isdigit(c as i32)
+        if is_dig != 0 {
+            result = result * 10 + ((c as i64) - 48)
+            found = 1
+        } else {
+            break
+        }
+        i++
+    }
+    if found == 0 { return -1 }
+    return result
+}
+
+/// Get mtime of a file as a heap string like "2024-01-15". Caller frees.
+fn file_date(path: ref char) ref char = {
+    pre { path_not_null: path != 0 as ref char }
+    val st: ref Stat = @alloc(@sizeof(Stat)) as ref Stat
+    val r: i32 = trust stat(path, st as ref void)
+    if r != 0 {
+        trust @free(st)
+        @puts("before substr")
+        return trust string.substr("unknown", 0, 7)
+    }
+    
+    val mtime: i64 = st.st_mtime
+    val tm: ref void = trust localtime(@addr(mtime))
+    val buf: ref char = @alloc(32) as ref char
+    trust strftime(buf, 32 as usize, "%B %d, %Y", tm)
+    trust @free(st)
+    return buf
+}
+
+/// Insertion-sort a list of ref char by their leading number (ascending).
+fn sort_by_num(files: list[ref char]) list[ref char] = {
+    val n: usize = @len(files)
+    val sorted: mut list[ref char] = []
+    val ci: mut usize = 0
+    for {
+        if ci >= n { break }
+        val fo = @get(files, ci)
+        match fo {
+            none   => { }
+            some v => { @append(sorted, v) }
+        }
+        ci++
+    }
+
+    val si: mut usize = 1
+    for {
+        if si >= n { break }
+        val ko = @get(sorted, si)
+        val key: mut ref char = 0 as ref char
+        match ko {
+            none   => { si++ }
+            some v => { key = v }
+        }
+        val knum: i64 = parse_leading_num(key)
+        val j: mut i64 = (si as i64) - 1
+        for {
+            if j < 0 { break }
+            val jo = @get(sorted, j as usize)
+            val jval: mut ref char = 0 as ref char
+            match jo {
+                none   => { break }
+                some v => { jval = v }
+            }
+            val jnum: i64 = parse_leading_num(jval)
+            if jnum <= knum { break }
+            @set(sorted, (j + 1) as usize, jval)
+            j = j - 1
+        }
+        @set(sorted, (j + 1) as usize, key)
+        si++
+    }
+
+    return sorted
+}
+
+fn ends_with_md(name: ref char) bool = {
+    return string.rchar_ends_with(name, ".md")
+}
+
+fn run_all(out_path: ref char) void = {
+    if out_path != 0 as ref char {
+        val fp: ref void = trust fopen(out_path, "w")
+        if fp == 0 as ref void {
+            trust @printf("md2html: cannot open output: {s}\n", {out_path})
+            trust exit(1)
+        }
+        g_outfp = fp
+    }
+
+    val cwd_opt = fs.cwd()
+    val cwd_str: mut ref char = "."
+    match cwd_opt {
+        none   => { }
+        some v => { cwd_str = v }
+    }
+
+    val entries_opt = trust fs.walk_dir(cwd_str)
+    val all_md: mut list[ref char] = []
+
+    match entries_opt {
+        none => {
+            trust @printf("md2html: cannot read directory\n")
+            trust exit(1)
+        }
+        some entries => {
+            val ei: mut usize = 0
+            val en: usize = @len(entries)
+            for {
+                if ei >= en { break }
+                val eo = @get(entries, ei)
+                match eo {
+                    none   => { }
+                    some name => {
+                        if ends_with_md(name) {
+                            val num: i64 = parse_leading_num(name)
+                            if num >= 0 {
+                                @append(all_md, name)
+                            }
+                        }
+                    }
+                }
+                ei++
+            }
+        }
+    }
+
+    val sorted: list[ref char] = sort_by_num(all_md)
+    val total: usize = @len(sorted)
+
+    emit_cstr(HTML_HEAD_1)
+    emit_cstr("devlog")
+    emit_cstr(HTML_HEAD_2)
+    emit_cstr(HTML_CSS)
+    emit_cstr(HTML_HEAD_3)
+    emit_cstr("devlog")
+    emit_cstr(HTML_HEAD_4)
+
+    val ri: mut i64 = (total as i64) - 1
+    for {
+        if ri < 0 { break }
+        val fo = @get(sorted, ri as usize)
+        match fo {
+            none   => { ri = ri - 1 }
+            some fname => {
+                val cwd_len: i64 = string.len_raw(cwd_str)
+                val fname_len: i64 = string.len_raw(fname)
+                val path_buf: ref char = @alloc(cwd_len + fname_len + 2) as ref char
+                trust @memcpy(path_buf as ref void, cwd_str as ref void, cwd_len)
+                trust @store8(@ptradd(path_buf as ref void, cwd_len), 47)  // '/'
+                trust @memcpy(@ptradd(path_buf as ref void, cwd_len + 1), fname as ref void, fname_len)
+                trust @store8(@ptradd(path_buf as ref void, cwd_len + fname_len + 1), 0)
+
+                val date_str: ref char = file_date(path_buf)
+
+                emit_cstr("<hr>\n<div class=\"post-meta\"><span class=\"tag\">entry</span><span class=\"dot\">·</span>")
+                emit_cstr(date_str)
+                emit_cstr("</div>\n")
+                trust @free(date_str)
+
+                val text: ref char = read_file_to_str(path_buf)
+                val lines: list[ref char] = split_lines(text)
+                convert(lines)
+
+                val nl: usize = @len(lines)
+                val li: mut usize = 0
+                for {
+                    if li >= nl { break }
+                    val lo = @get(lines, li)
+                    match lo {
+                        none   => { }
+                        some v => { trust @free(v as ref void) }
+                    }
+                    li++
+                }
+                trust @free(text as ref void)
+                trust @free(path_buf as ref void)
+            }
+        }
+        ri = ri - 1
+    }
+
+    emit_cstr(HTML_FOOT)
+
+    if g_outfp != 0 as ref void {
+        trust fflush(g_outfp)
+        trust fclose(g_outfp)
+    }
+}
 
 pub fn main() void = {
     val args: list[ref char] = @args()
@@ -982,15 +1216,31 @@ pub fn main() void = {
 
     if argc < 2 {
         @puts("usage: md2html <input.md> [output.html]\n")
+        @puts("       md2html --all [output.html]\n")
         trust exit(1)
     }
 
-    val input_path_opt = @get(args, 1)
-    val input_path: mut ref char = 0 as ref char
-    match input_path_opt {
+    val arg1_opt = @get(args, 1)
+    val arg1: mut ref char = 0 as ref char
+    match arg1_opt {
         none   => { trust exit(1) }
-        some v => { input_path = v }
+        some v => { arg1 = v }
     }
+
+    if string.rchar_starts_with(arg1, "--all") {
+        val out_path: mut ref char = "out.html"
+        if argc >= 3 {
+            val op = @get(args, 2)
+            match op {
+                none   => { }
+                some v => { out_path = v }
+            }
+        }
+        run_all(out_path)
+        return
+    }
+
+    val input_path: ref char = arg1
 
     if argc >= 3 {
         val out_path_opt = @get(args, 2)
@@ -1020,7 +1270,6 @@ pub fn main() void = {
     emit_cstr(HTML_HEAD_3)
     emit(title_esc)
     emit_cstr(HTML_HEAD_4)
-
     trust @free(title_esc)
 
     convert(lines)
