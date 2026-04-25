@@ -294,7 +294,7 @@ val HTML_HEAD_3: ref char = \\ </style>
 
 val HTML_HEAD_4: ref char = \\     </div>
 
-val HTML_FOOT: ref char   = \\     <footer class="footer">generated with md2html · spectre</footer>
+val HTML_FOOT: ref char   = \\     <footer class="footer">generated with <a href="https://github.com/navid-m/md2html">md2html</a></footer>
                             \\   </div>
                             \\ </body>
                             \\ </html>
