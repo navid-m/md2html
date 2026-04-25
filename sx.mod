@@ -7,5 +7,5 @@ build release {
 }
 
 build dev {
-    output "./md2html-dev"
+    output "./md2html"
 }
