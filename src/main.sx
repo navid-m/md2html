@@ -55,7 +55,6 @@ val HTML_CSS: ref char = \\ *, *::before, *::after { box-sizing: border-box; mar
                          \\   min-height: 100vh;
                          \\ }
                          \\
-                         \\ /* grain overlay */
                          \\ body::before {
                          \\   content: '';
                          \\   position: fixed;
