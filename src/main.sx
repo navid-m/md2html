@@ -133,7 +133,6 @@ val HTML_CSS: ref char = \\ *, *::before, *::after { box-sizing: border-box; mar
                          \\ h1 {
                          \\   font-size: clamp(2.1rem, 5vw, 3rem);
                          \\   margin-bottom: 0.35em;
-                         \\   font-style: italic;
                          \\ }
                          \\ h2 {
                          \\   font-size: 1.45rem;
