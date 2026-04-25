@@ -299,10 +299,10 @@ val HTML_FOOT: ref char   = \\     <footer class="footer">generated with <a href
                             \\ </body>
                             \\ </html>
 
-// Global output file pointer (stdout by default)
+/// Global output file pointer (stdout by default)
 val g_outfp: mut ref void = 0 as ref void
 
-// Write a C string to output
+/// Write a C string to output
 fn emit_cstr(s: ref char) void = {
     pre { s_not_null: s != 0 as ref char }
     val l: i64 = string.len_raw(s)
@@ -316,7 +316,7 @@ fn emit_cstr(s: ref char) void = {
     }
 }
 
-// Write a heap String to output
+/// Write a heap String to output
 fn emit(s: ref void) void = {
     pre { s_not_null: s != 0 as ref void }
     val raw: ref char = trust string.cstr(s)
@@ -368,7 +368,6 @@ fn render_inline(src: ref char) ref void = {
             some v => { c0 = v }
         }
 
-        // **bold** (two asterisks)
         if c0 == 42 {  // '*'
             val c1b = string.byte_at(src, i + 1)
             val c1: mut u8 = 0
@@ -377,7 +376,6 @@ fn render_inline(src: ref char) ref void = {
                 some v => { c1 = v }
             }
             if c1 == 42 {
-                // find closing **
                 val j: mut i64 = i + 2
                 val found_close: mut i64 = 0
                 for {
@@ -552,7 +550,6 @@ fn render_inline(src: ref char) ref void = {
                 i = i + 1
             }
         } else {
-            // Normal character — HTML-escape it
             if c0 == 60 {
                 string.StringBuilder.append_cstr(sb, "&lt;")
             } elif c0 == 62 {
@@ -571,7 +568,7 @@ fn render_inline(src: ref char) ref void = {
     return result
 }
 
-// Escape a single byte as HTML (returns heap String)
+/// Escape a single byte as HTML (returns heap String)
 fn html_escape_char(c: u8) ref void = {
     val sb: ref void = string.StringBuilder.new()
     if c == 60 {
@@ -590,7 +587,7 @@ fn html_escape_char(c: u8) ref void = {
     return r
 }
 
-// Returns number of leading '#' chars (1–3), or 0 if not a heading.
+/// Returns number of leading '#' chars (1–3), or 0 if not a heading.
 fn heading_level(line: ref char) i32 = {
     pre { line_not_null: line != 0 as ref char }
     val c0b = string.byte_at(line, 0)
@@ -629,7 +626,7 @@ fn heading_level(line: ref char) i32 = {
     return 0
 }
 
-// Returns true if line is a horizontal rule (--- or ***)
+/// Returns true if line is a horizontal rule (--- or ***)
 fn is_hr(line: ref char) bool = {
     pre { line_not_null: line != 0 as ref char }
     val l: i64 = string.len_raw(line)
@@ -658,7 +655,7 @@ fn is_hr(line: ref char) bool = {
     return true
 }
 
-// Returns true if line starts with "- " (unordered list item)
+/// Returns true if line starts with "- " (unordered list item)
 fn is_list_item(line: ref char) bool = {
     pre { line_not_null: line != 0 as ref char }
     val c0b = string.byte_at(line, 0)
@@ -677,7 +674,7 @@ fn is_list_item(line: ref char) bool = {
     return c1 == 32
 }
 
-// Returns true if line starts with "> "
+/// Returns true if line starts with "> "
 fn is_blockquote(line: ref char) bool = {
     pre { line_not_null: line != 0 as ref char }
     val c0b = string.byte_at(line, 0)
@@ -696,13 +693,13 @@ fn is_blockquote(line: ref char) bool = {
     return c1 == 32
 }
 
-// Returns true if line starts with "```"
+/// Returns true if line starts with "```"
 fn is_fence(line: ref char) bool = {
     pre { line_not_null: line != 0 as ref char }
     return string.rchar_starts_with(line, "```")
 }
 
-// Returns true if line is blank (empty or only whitespace)
+/// Returns true if line is blank (empty or only whitespace)
 fn is_blank(line: ref char) bool = {
     pre { line_not_null: line != 0 as ref char }
     val l: i64 = string.len_raw(line)
@@ -736,12 +733,11 @@ fn read_file_to_str(path: ref char) ref char = {
         trust exit(1)
         return 0 as ref char
     }
-    trust fseek(fp, 0, 2)  // SEEK_END = 2
+    trust fseek(fp, 0, 2) 
     val file_size: i64 = trust ftell(fp)
     trust rewind(fp)
     val buf: ref void = @alloc(file_size + 2)
     trust fread(buf, 1 as usize, file_size as usize, fp)
-    // null-terminate
     trust @store8(@ptradd(buf, file_size), 0)
     trust fclose(fp)
     return buf as ref char
@@ -763,9 +759,7 @@ fn split_lines(text: ref char) list[ref char] = {
                 some v => { c = v }
             }
         }
-        // On newline or end-of-string, emit the segment
         if c == 10 || i == len {  // '\n'
-            // segment is text[seg_start .. i), strip trailing \r
             val seg_end: mut i64 = i
             if seg_end > seg_start {
                 val last_b = string.byte_at(text, seg_end - 1)
@@ -783,7 +777,7 @@ fn split_lines(text: ref char) list[ref char] = {
             @append(lines, line)
             seg_start = i + 1
         }
-        i = i + 1
+        i++
     }
     return lines
 }
