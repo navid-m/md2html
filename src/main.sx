@@ -789,9 +789,6 @@ fn split_lines(text: ref char) list[ref char] = {
     return lines
 }
 
-// ─── Main conversion ──────────────────────────────────────────────────────────
-
-// Parser state
 val STATE_NORMAL:    i32 = 0
 val STATE_UL:        i32 = 1
 val STATE_BLOCKQUOTE:i32 = 2
@@ -802,8 +799,6 @@ fn close_block(state: i32) void = {
     if state == STATE_UL        { emit_cstr("</ul>\n") }
     elif state == STATE_BLOCKQUOTE { emit_cstr("</blockquote>\n") }
     elif state == STATE_PARA    { emit_cstr("</p>\n") }
-    // STATE_PRE is closed by the closing fence
-    // STATE_NORMAL needs nothing
 }
 
 fn convert(lines: list[ref char]) void = {
@@ -822,16 +817,13 @@ fn convert(lines: list[ref char]) void = {
             some v => { line = v }
         }
 
-        // ── Code fence ───────────────────────────────────────────────────────
         if is_fence(line) {
             if state == STATE_PRE {
-                // closing fence
                 emit_cstr("</code></pre>\n")
                 state = STATE_NORMAL
             } else {
                 close_block(state)
                 state = STATE_PRE
-                // extract optional language tag after ```
                 val lang: ref char = trust string.substr(line, 3, string.len_raw(line) - 3)
                 val lang_esc: ref void = html_escape(lang)
                 trust @free(lang as ref void)
@@ -842,14 +834,12 @@ fn convert(lines: list[ref char]) void = {
             }
             i = i + 1
         } elif state == STATE_PRE {
-            // Inside code block — emit raw, html-escaped
             val esc: ref void = html_escape(line)
             emit(esc)
             trust @free(esc)
             emit_cstr("\n")
             i = i + 1
         } elif is_blank(line) {
-            // Blank line closes current block
             close_block(state)
             state = STATE_NORMAL
             i = i + 1
@@ -942,15 +932,9 @@ fn convert(lines: list[ref char]) void = {
     close_block(state)
 }
 
-// ─── Date / filename helper ───────────────────────────────────────────────────
-// Extracts a display name from the input filename for the <title> and meta.
-// e.g. "2024-01-15-my-post.md" → "2024-01-15 · my post"
-// Falls back to the raw filename.
-
 fn make_title(path: ref char) ref char = {
     pre { path_not_null: path != 0 as ref char }
     val l: i64 = string.len_raw(path)
-    // find last '/' or start
     val base_start: mut i64 = 0
     val k: mut i64 = l - 1
     for {
@@ -1003,8 +987,6 @@ fn make_title(path: ref char) ref char = {
     return r
 }
 
-// ─── Entry point ──────────────────────────────────────────────────────────────
-
 pub fn main() void = {
     val args: list[ref char] = @args()
     val argc: usize = @len(args)
@@ -1021,7 +1003,6 @@ pub fn main() void = {
         some v => { input_path = v }
     }
 
-    // Optional output path
     if argc >= 3 {
         val out_path_opt = @get(args, 2)
         match out_path_opt {
@@ -1037,18 +1018,12 @@ pub fn main() void = {
         }
     }
 
-    // Read input
     val text: ref char = read_file_to_str(input_path)
-
-    // Split into lines
     val lines: list[ref char] = split_lines(text)
-
-    // Extract title from filename
     val title_raw: ref char = make_title(input_path)
     val title_esc: ref void = html_escape(title_raw)
     trust @free(title_raw as ref void)
 
-    // Emit HTML head
     emit_cstr(HTML_HEAD_1)
     emit(title_esc)
     emit_cstr(HTML_HEAD_2)
@@ -1059,19 +1034,14 @@ pub fn main() void = {
 
     trust @free(title_esc)
 
-    // Convert body
     convert(lines)
-
-    // Emit footer
     emit_cstr(HTML_FOOT)
 
-    // Flush and close
     if g_outfp != 0 as ref void {
         trust fflush(g_outfp)
         trust fclose(g_outfp)
     }
 
-    // Free line buffers
     val nl: usize = @len(lines)
     val li: mut usize = 0
     for {
