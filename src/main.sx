@@ -1146,11 +1146,9 @@ fn run_all(out_path: ref char) void = {
     val total: usize = @len(sorted)
 
     emit_cstr(HTML_HEAD_1)
-    emit_cstr("devlog")
     emit_cstr(HTML_HEAD_2)
     emit_cstr(HTML_CSS)
     emit_cstr(HTML_HEAD_3)
-    emit_cstr("devlog")
     emit_cstr(HTML_HEAD_4)
 
     val ri: mut i64 = (total as i64) - 1
