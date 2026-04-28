@@ -308,14 +308,9 @@ val HTML_HEAD_3: ref char = \\ </style>
                             \\ </head>
                             \\ <body>
                             \\   <header class="site-header">
-                            \\     <div class="site-header-inner">
-                            \\       <a class="site-logo" href="#">devlog<span>.md</span></a>
-                            \\     </div>
                             \\   </header>
                             \\   <div class="container">
                             \\     <div class="post-meta">
-                            \\       <span class="tag">devlog</span>
-                            \\       <span class="dot">·</span>
 
 val HTML_HEAD_4: ref char = \\     </div>
 
@@ -1175,7 +1170,7 @@ fn run_all(out_path: ref char) void = {
 
                 val date_str: ref char = file_date(path_buf)
 
-                emit_cstr("<hr>\n<div class=\"post-meta\"><span class=\"tag\">entry</span><span class=\"dot\">·</span>")
+                emit_cstr("<hr>\n<div class=\"post-meta\">")
                 emit_cstr(date_str)
                 emit_cstr("</div>\n")
                 trust @free(date_str)
