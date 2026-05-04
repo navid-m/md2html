@@ -371,10 +371,10 @@ fn is_raw_img_tag_start(src: ref u8, pos: i64, len: i64) bool = {
     match c3b { none => { return false } some v => { c3 = v } }
     match c4b { none => { return false } some v => { c4 = v } }
 
-    if c0 != 60 { return false }   // '<'
-    if c1 != 105 { return false }  // 'i'
-    if c2 != 109 { return false }  // 'm'
-    if c3 != 103 { return false }  // 'g'
+    if c0 != '<' { return false }
+    if c1 != 'i' { return false } 
+    if c2 != 'm' { return false }
+    if c3 != 'g' { return false }
 
     return c4 == 32 || c4 == 9 || c4 == 10 || c4 == 13 || c4 == 47 || c4 == 62
 }
