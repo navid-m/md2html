@@ -822,7 +822,7 @@ fn make_title(path: ref u8) ref u8 = {
             base_start = k + 1
             break
         }
-        k = k - 1
+        k--
     }
     val base_end: mut i64 = l
     if string.rchar_ends_with(path, ".md") {
