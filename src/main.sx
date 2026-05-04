@@ -747,7 +747,6 @@ fn convert(lines: list[ref u8]) void = {
             if hlevel > 0 {
                 close_block(state)
                 state = STATE_NORMAL
-                // Strip leading "# " / "## " / "### "
                 val skip: i32 = hlevel + 1
                 val text_start: ref u8 = trust string.substr(line, skip as i64, string.len_raw(line) - (skip as i64))
                 val rendered: ref void = render_inline(text_start)
@@ -767,7 +766,6 @@ fn convert(lines: list[ref u8]) void = {
                     emit_cstr("<ul>\n")
                     state = STATE_UL
                 }
-                // Skip "- "
                 val text_start: ref u8 = trust string.substr(line, 2, string.len_raw(line) - 2)
                 val rendered: ref void = render_inline(text_start)
                 trust @free(text_start as ref void)
