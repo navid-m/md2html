@@ -1047,7 +1047,7 @@ fn run_all(out_path: ref u8) void = {
                 trust @free(path_buf as ref void)
             }
         }
-        ri = ri - 1
+        ri--
     }
 
     emit_cstr(hdata.HTML_FOOT)
