@@ -1018,10 +1018,13 @@ fn run_all(out_path: ref u8) void = {
                 val cwd_len: i64 = string.len_raw(cwd_str)
                 val fname_len: i64 = string.len_raw(fname)
                 val path_buf: ref u8 = @alloc(cwd_len + fname_len + 2) as ref u8
-                trust @memcpy(path_buf as ref void, cwd_str as ref void, cwd_len)
-                trust @store8(@ptradd(path_buf as ref void, cwd_len), 47)  // '/'
-                trust @memcpy(@ptradd(path_buf as ref void, cwd_len + 1), fname as ref void, fname_len)
-                trust @store8(@ptradd(path_buf as ref void, cwd_len + fname_len + 1), 0)
+
+                trust {
+                    @memcpy(path_buf as ref void, cwd_str as ref void, cwd_len)
+                    @store8(@ptradd(path_buf as ref void, cwd_len), 47)  // '/'
+                    @memcpy(@ptradd(path_buf as ref void, cwd_len + 1), fname as ref void, fname_len)
+                    @store8(@ptradd(path_buf as ref void, cwd_len + fname_len + 1), 0)
+                }
 
                 val date_str: ref u8 = file_date(path_buf)
 
