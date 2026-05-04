@@ -220,7 +220,7 @@ fn render_inline(src: ref u8) ref void = {
                     found_close = j
                     break
                 }
-                j = j + 1
+                j++
             }
             if found_close != 0 {
                 val inner: ref u8 = trust string.substr(src, i + 1, found_close - (i + 1))
