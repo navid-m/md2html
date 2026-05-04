@@ -916,9 +916,8 @@ fn sort_by_num(files: list[ref u8]) list[ref u8] = {
     for {
         if ci >= n { break }
         val fo = @get(files, ci)
-        match fo {
-            none   => { }
-            some v => { @append(sorted, v) }
+        if fo is some v {
+            @append(sorted, v)
         }
         ci++
     }
@@ -970,9 +969,8 @@ fn run_all(out_path: ref u8) void = {
 
     val cwd_opt = fs.cwd()
     val cwd_str: mut ref u8 = "."
-    match cwd_opt {
-        none   => { }
-        some v => { cwd_str = v }
+    if cwd_opt is some v {
+        cwd_str = v
     }
 
     val entries_opt = trust fs.walk_dir(cwd_str)
@@ -986,8 +984,7 @@ fn run_all(out_path: ref u8) void = {
         some entries => {
             val ei: mut usize = 0
             val en: usize = @len(entries)
-            for {
-                if ei >= en { break }
+            for ei < en {
                 val eo = @get(entries, ei)
                 match eo {
                     none   => { }
@@ -1089,9 +1086,8 @@ pub fn main() void = {
         val out_path: mut ref u8 = "out.html"
         if argc >= 3 {
             val op = @get(args, 2)
-            match op {
-                none   => { }
-                some v => { out_path = v }
+            if op is some v {
+                out_path = v 
             }
         }
         run_all(out_path)
@@ -1102,16 +1098,13 @@ pub fn main() void = {
 
     if argc >= 3 {
         val out_path_opt = @get(args, 2)
-        match out_path_opt {
-            none   => { }
-            some p => {
-                val fp: ref void = trust fopen(p, "w")
-                if fp == none {
-                    trust @print("md2html: cannot open output file: {s}\n", {p})
-                    trust exit(1 as i32)
-                }
-                g_outfp = fp
+        if out_path_opt is some p {
+            val fp: ref void = trust fopen(p, "w")
+            if fp == none {
+                trust @print("md2html: cannot open output file: {s}\n", {p})
+                trust exit(1 as i32)
             }
+            g_outfp = fp
         }
     }
 
@@ -1143,9 +1136,8 @@ pub fn main() void = {
     for {
         if li >= nl { break }
         val lo = @get(lines, li)
-        match lo {
-            none   => { }
-            some v => { trust @free(v as ref void) }
+        if lo is some v {
+            trust @free(v as ref void)
         }
         li = li + 1
     }
