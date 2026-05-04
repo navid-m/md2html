@@ -984,14 +984,11 @@ fn run_all(out_path: ref u8) void = {
             val en: usize = @len(entries)
             for ei < en {
                 val eo = @get(entries, ei)
-                match eo {
-                    none   => { }
-                    some name => {
-                        if ends_with_md(name) {
-                            val num: i64 = parse_leading_num(name)
-                            if num >= 0 {
-                                @append(all_md, name)
-                            }
+                if eo is some name {
+                    if ends_with_md(name) {
+                        val num: i64 = parse_leading_num(name)
+                        if num >= 0 {
+                            @append(all_md, name)
                         }
                     }
                 }
