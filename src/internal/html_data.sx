@@ -1,18 +1,18 @@
 
 val HTML_HEAD_1: ref u8 = \\ <!DOCTYPE html>
-                            \\ <html lang="en">
-                            \\ <head>
-                            \\   <meta u8set="UTF-8">
-                            \\   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            \\   <title>
+                          \\ <html lang="en">
+                          \\ <head>
+                          \\   <meta u8set="UTF-8">
+                          \\   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                          \\   <title>
 
 val HTML_HEAD_2: ref u8 = \\ </title>
-                            \\   <link rel="preconnect" href="https://fonts.googleapis.com">
-                            \\   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                            \\   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-                            \\   <style>
+                          \\   <link rel="preconnect" href="https://fonts.googleapis.com">
+                          \\   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                          \\   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+                          \\   <style>
 
-val HTML_CSS: ref u8 = \\ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+val HTML_CSS: ref u8 =   \\ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
                          \\
                          \\ :root {
                          \\   --bg:        #0d0d0f;
@@ -287,18 +287,18 @@ val HTML_CSS: ref u8 = \\ *, *::before, *::after { box-sizing: border-box; margi
                          \\ .container > *:nth-child(n+6) { animation-delay: 0.38s; }
 
 val HTML_HEAD_3: ref u8 = \\ </style>
-                            \\ </head>
-                            \\ <body>
-                            \\   <header class="site-header">
-                            \\   </header>
-                            \\   <div class="container">
-                            \\     <div class="post-meta">
+                          \\ </head>
+                          \\ <body>
+                          \\   <header class="site-header">
+                          \\   </header>
+                          \\   <div class="container">
+                          \\     <div class="post-meta">
 
 val HTML_HEAD_4: ref u8 = \\     </div>
 
 val HTML_FOOT: ref u8   = \\     <footer class="footer">generated with <a href="https://github.com/navid-m/md2html">md2html</a></footer>
-                            \\   </div>
-                            \\ </body>
-                            \\ </html>
+                          \\   </div>
+                          \\ </body>
+                          \\ </html>
 
 
