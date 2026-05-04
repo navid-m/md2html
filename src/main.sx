@@ -855,8 +855,7 @@ fn make_title(path: ref u8) ref u8 = {
         @free(base as ref void)
         val result: ref void = string.StringBuilder.build(sb)
         string.StringBuilder.free(sb)
-        val r: ref u8 = string.cstr(result)
-        return r
+        return string.cstr(result)
     }
 }
 
