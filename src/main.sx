@@ -691,7 +691,7 @@ val STATE_PRE:       i32 = 3
 val STATE_PARA:      i32 = 4
 
 fn close_block(state: i32) void = {
-    if state == STATE_UL            { emit_cstr("</ul>\n") }
+    if state   == STATE_UL          { emit_cstr("</ul>\n") }
     elif state == STATE_BLOCKQUOTE  { emit_cstr("</blockquote>\n") }
     elif state == STATE_PARA        { emit_cstr("</p>\n") }
 }
