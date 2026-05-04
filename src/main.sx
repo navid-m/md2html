@@ -272,22 +272,24 @@ fn render_inline(src: ref u8) ref void = {
                             close_paren = k
                             break
                         }
-                        k = k + 1
+                        k++
                     }
                     if close_paren != -1 {
                         val link_text: ref u8 = trust string.substr(src, i + 1, close_bracket - (i + 1))
                         val link_url:  ref u8 = trust string.substr(src, close_bracket + 2, close_paren - (close_bracket + 2))
                         val escaped_text: ref void = html_escape(link_text)
                         val escaped_url:  ref void = html_escape(link_url)
-                        trust @free(link_text as ref void)
-                        trust @free(link_url as ref void)
-                        trust string.StringBuilder.append_cstr(sb, "<a href=\"")
-                        trust string.StringBuilder.append(sb, escaped_url)
-                        trust string.StringBuilder.append_cstr(sb, "\">")
-                        trust string.StringBuilder.append(sb, escaped_text)
-                        trust string.StringBuilder.append_cstr(sb, "</a>")
-                        trust @free(escaped_text)
-                        trust @free(escaped_url)
+                        trust {
+                            @free(link_text as ref void)
+                            @free(link_url as ref void)
+                            string.StringBuilder.append_cstr(sb, "<a href=\"")
+                            string.StringBuilder.append(sb, escaped_url)
+                            string.StringBuilder.append_cstr(sb, "\">")
+                            string.StringBuilder.append(sb, escaped_text)
+                            string.StringBuilder.append_cstr(sb, "</a>")
+                            @free(escaped_text)
+                            @free(escaped_url)
+                        }
                         i = close_paren + 1
                     } else {
                         val esc: ref void = html_escape_u8(c0)
