@@ -38,6 +38,7 @@ when linux {
         __unused:   [3]i64
     }
 }
+
 /// Global output file pointer (stdout by default)
 val g_outfp: mut ref void = none
 
