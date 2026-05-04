@@ -1131,8 +1131,10 @@ pub fn main() void = {
     emit_cstr(hdata.HTML_FOOT)
 
     if g_outfp != none {
-        trust fflush(g_outfp)
-        trust fclose(g_outfp)
+        trust {
+            fflush(g_outfp)
+            fclose(g_outfp)
+        }
     }
 
     val nl: usize = @len(lines)
