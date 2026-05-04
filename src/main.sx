@@ -1136,7 +1136,7 @@ pub fn main() void = {
         if lo is some v {
             trust @free(v as ref void)
         }
-        li = li + 1
+        li++
     }
 
     trust @free(text as ref void)
