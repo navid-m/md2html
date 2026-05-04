@@ -7,5 +7,6 @@ build release {
 }
 
 build dev {
+    flags "-a"
     output "./md2html"
 }
