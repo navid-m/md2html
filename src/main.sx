@@ -849,7 +849,7 @@ fn make_title(path: ref u8) ref u8 = {
         } else {
             trust string.StringBuilder.append_char(sb, c)
         }
-        j = j + 1
+        j++ 
     }
     trust {
         @free(base as ref void)
