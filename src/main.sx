@@ -357,6 +357,7 @@ fn html_escape_u8(c: u8) ref void = {
 
 fn is_raw_img_tag_start(src: ref u8, pos: i64, len: i64) bool = {
     pre { src_not_null: src != none }
+    
     if pos + 4 >= len { return false }
 
     val c0b = string.byte_at(src, pos)
@@ -369,6 +370,7 @@ fn is_raw_img_tag_start(src: ref u8, pos: i64, len: i64) bool = {
     val c2: mut u8 = 0
     val c3: mut u8 = 0
     val c4: mut u8 = 0
+    
     match c0b { none => { return false } some v => { c0 = v } }
     match c1b { none => { return false } some v => { c1 = v } }
     match c2b { none => { return false } some v => { c2 = v } }
