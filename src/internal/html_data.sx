@@ -1,4 +1,3 @@
-
 val HTML_HEAD_1: ref u8 = \\ <!DOCTYPE html>
                           \\ <html lang="en">
                           \\ <head>
