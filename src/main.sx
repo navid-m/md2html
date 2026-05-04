@@ -73,13 +73,13 @@ fn html_escape(src: ref u8) ref void = {
         match ob {
             none   => { break }
             some c => {
-                if c == 60 {  // '<'
+                if c == '<' {  
                     trust string.StringBuilder.append_cstr(sb, "&lt;")
-                } elif c == 62 { // '>'
+                } elif c == '>' { 
                     trust string.StringBuilder.append_cstr(sb, "&gt;")
-                } elif c == 38 { // '&'
+                } elif c == '&' {
                     trust string.StringBuilder.append_cstr(sb, "&amp;")
-                } elif c == 34 { // '"'
+                } elif c == '"' {
                     trust string.StringBuilder.append_cstr(sb, "&quot;")
                 } else {
                     trust string.StringBuilder.append_char(sb, c)
