@@ -1101,8 +1101,10 @@ pub fn main() void = {
         if out_path_opt is some p {
             val fp: ref void = trust fopen(p, "w")
             if fp == none {
-                trust @print("md2html: cannot open output file: {s}\n", {p})
-                trust exit(1 as i32)
+                trust {
+                    @print("md2html: cannot open output file: {s}\n", {p})
+                    exit(1 as i32)
+                }
             }
             g_outfp = fp
         }
