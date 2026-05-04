@@ -833,7 +833,6 @@ fn make_title(path: ref u8) ref u8 = {
         return trust string.substr(path, 0, l)
     }
     val base: ref u8 = trust string.substr(path, base_start, base_len)
-    // replace '-' with space for a readable title
     val bl: i64 = string.len_raw(base)
     val sb: ref void = string.StringBuilder.new()
     val j: mut i64 = 0
