@@ -1,4 +1,5 @@
 val string = use("std/string")
+val fs     = use("std/fs")
 val stdio  = use("std/stdio")
 val hdata  = use("internal/html_data.sx")
 
@@ -859,7 +860,6 @@ fn make_title(path: ref u8) ref u8 = {
         return r
     }
 }
-val fs = use("std/fs")
 
 /// Extract leading integer from a filename like "3 - foo.md". Returns -1 if none.
 fn parse_leading_num(name: ref u8) i64 = {
