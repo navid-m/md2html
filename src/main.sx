@@ -45,7 +45,7 @@ val g_outfp: mut ref void = none
 
 /// Write a C string to output
 fn emit_cstr(s: ref u8) void = {
-    pre { s_not_null: s != none }
+    guarded pre { s_not_null: s != none }
     val l: i64 = string.len_raw(s)
     if l <= 0 {
         return
