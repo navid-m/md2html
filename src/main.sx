@@ -664,16 +664,13 @@ fn split_lines(text: ref u8) list[ref u8] = {
                 some v => { c = v }
             }
         }
-        if c == 10 || i == len {  // '\n'
+        if c == '\n' || i == len {
             val seg_end: mut i64 = i
             if seg_end > seg_start {
                 val last_b = string.byte_at(text, seg_end - 1)
-                match last_b {
-                    none   => { }
-                    some v => {
-                        if v == 13 {  // '\r'
-                            seg_end = seg_end - 1
-                        }
+                if last_b is some v { 
+                    if v == '\r' {
+                        seg_end = seg_end - 1
                     }
                 }
             }
