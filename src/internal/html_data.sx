@@ -1,0 +1,304 @@
+
+val HTML_HEAD_1: ref u8 = \\ <!DOCTYPE html>
+                            \\ <html lang="en">
+                            \\ <head>
+                            \\   <meta u8set="UTF-8">
+                            \\   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            \\   <title>
+
+val HTML_HEAD_2: ref u8 = \\ </title>
+                            \\   <link rel="preconnect" href="https://fonts.googleapis.com">
+                            \\   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                            \\   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+                            \\   <style>
+
+val HTML_CSS: ref u8 = \\ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+                         \\
+                         \\ :root {
+                         \\   --bg:        #0d0d0f;
+                         \\   --bg2:       #13131a;
+                         \\   --bg3:       #1a1a24;
+                         \\   --border:    #2a2a38;
+                         \\   --text:      #dcd8cc;
+                         \\   --text-dim:  #7a7670;
+                         \\   --accent:    #c9a96e;
+                         \\   --accent2:   #7eb8c9;
+                         \\   --accent3:   #a87fc0;
+                         \\   --code-bg:   #111118;
+                         \\   --code-text: #b8d4a8;
+                         \\   --serif:     'Instrument Serif', 'Libre Baskerville', Georgia, serif;
+                         \\   --mono:      'JetBrains Mono', 'Courier New', monospace;
+                         \\ }
+                         \\
+                         \\ html { scroll-behavior: smooth; }
+                         \\
+                         \\ body {
+                         \\   background: var(--bg);
+                         \\   color: var(--text);
+                         \\   font-family: var(--mono);
+                         \\   font-size: 15px;
+                         \\   font-weight: 300;
+                         \\   line-height: 1.9;
+                         \\   min-height: 100vh;
+                         \\ }
+                         \\
+                         \\ body::before {
+                         \\   content: '';
+                         \\   position: fixed;
+                         \\   inset: 0;
+                         \\   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+                         \\   background-size: 256px 256px;
+                         \\   pointer-events: none;
+                         \\   z-index: 9999;
+                         \\   opacity: 0.35;
+                         \\ }
+                         \\
+                         \\ .site-header {
+                         \\   border-bottom: 1px solid var(--border);
+                         \\   padding: 1.4rem 0;
+                         \\   position: sticky;
+                         \\   top: 0;
+                         \\   background: rgba(13,13,15,0.88);
+                         \\   backdrop-filter: blur(12px);
+                         \\   -webkit-backdrop-filter: blur(12px);
+                         \\   z-index: 100;
+                         \\ }
+                         \\ .site-header-inner {
+                         \\   max-width: 740px;
+                         \\   margin: 0 auto;
+                         \\   padding: 0 2rem;
+                         \\   display: flex;
+                         \\   align-items: center;
+                         \\   gap: 1rem;
+                         \\ }
+                         \\ .site-logo {
+                         \\   font-size: 0.7rem;
+                         \\   letter-spacing: 0.25em;
+                         \\   text-transform: uppercase;
+                         \\   color: var(--accent);
+                         \\   text-decoration: none;
+                         \\   font-weight: 500;
+                         \\ }
+                         \\ .site-logo span {
+                         \\   color: var(--text-dim);
+                         \\   font-weight: 300;
+                         \\ }
+                         \\
+                         \\ .container {
+                         \\   max-width: 740px;
+                         \\   margin: 0 auto;
+                         \\   padding: 4rem 2rem 8rem;
+                         \\ }
+                         \\
+                         \\ .post-meta {
+                         \\   display: flex;
+                         \\   align-items: center;
+                         \\   gap: 0.75rem;
+                         \\   margin-bottom: 3rem;
+                         \\   font-size: 0.72rem;
+                         \\   letter-spacing: 0.12em;
+                         \\   text-transform: uppercase;
+                         \\   color: var(--text-dim);
+                         \\ }
+                         \\ .post-meta .dot { color: var(--border); }
+                         \\ .post-meta .tag {
+                         \\   color: var(--accent2);
+                         \\   border: 1px solid var(--accent2);
+                         \\   padding: 0.15em 0.55em;
+                         \\   font-size: 0.65rem;
+                         \\   letter-spacing: 0.1em;
+                         \\   opacity: 0.7;
+                         \\ }
+                         \\
+                         \\ h1, h2, h3, h4 {
+                         \\   font-family: var(--serif);
+                         \\   font-weight: 400;
+                         \\   letter-spacing: -0.01em;
+                         \\   line-height: 1.25;
+                         \\   color: #f0ece2;
+                         \\ }
+                         \\ h1 {
+                         \\   font-size: clamp(2.1rem, 5vw, 3rem);
+                         \\   margin-bottom: 0.35em;
+                         \\ }
+                         \\ h2 {
+                         \\   font-size: 1.45rem;
+                         \\   margin-top: 3.2rem;
+                         \\   margin-bottom: 0.9rem;
+                         \\   padding-bottom: 0.4rem;
+                         \\   border-bottom: 1px solid var(--border);
+                         \\ }
+                         \\ h3 {
+                         \\   font-size: 1.05rem;
+                         \\   margin-top: 2.4rem;
+                         \\   margin-bottom: 0.6rem;
+                         \\   color: var(--accent);
+                         \\   font-style: italic;
+                         \\ }
+                         \\
+                         \\ .heading-anchor {
+                         \\   color: inherit;
+                         \\   border-bottom: none;
+                         \\ }
+                         \\ .heading-anchor:hover {
+                         \\   color: inherit;
+                         \\   border-bottom: none;
+                         \\ }
+                         \\ .heading-anchor::after {
+                         \\   content: ' #';
+                         \\   color: var(--text-dim);
+                         \\   font-family: var(--mono);
+                         \\   font-size: 0.55em;
+                         \\   opacity: 0.5;
+                         \\   vertical-align: middle;
+                         \\ }
+                         \\ .heading-anchor:hover::after {
+                         \\   color: var(--accent2);
+                         \\   opacity: 0.9;
+                         \\ }
+                         \\
+                         \\ p {
+                         \\   margin-bottom: 1.35rem;
+                         \\   color: var(--text);
+                         \\   max-width: 68ch;
+                         \\ }
+                         \\
+                         \\ a {
+                         \\   color: var(--accent2);
+                         \\   text-decoration: none;
+                         \\   border-bottom: 1px solid transparent;
+                         \\   transition: border-color 0.2s, color 0.2s;
+                         \\ }
+                         \\ a:hover {
+                         \\   color: #aed8ea;
+                         \\   border-bottom-color: var(--accent2);
+                         \\ }
+                         \\
+                         \\ strong { color: #f0ece2; font-weight: 500; }
+                         \\ em     { font-family: var(--serif); font-style: italic; color: #d4c8b8; font-size: 1.05em; }
+                         \\
+                         \\ code {
+                         \\   font-family: var(--mono);
+                         \\   font-size: 0.85em;
+                         \\   background: var(--code-bg);
+                         \\   color: var(--code-text);
+                         \\   padding: 0.15em 0.45em;
+                         \\   border: 1px solid var(--border);
+                         \\   border-radius: 2px;
+                         \\ }
+                         \\
+                         \\ pre {
+                         \\   background: var(--code-bg);
+                         \\   border: 1px solid var(--border);
+                         \\   border-left: 3px solid var(--accent3);
+                         \\   padding: 1.5rem 1.75rem;
+                         \\   margin: 2rem 0;
+                         \\   overflow-x: auto;
+                         \\   position: relative;
+                         \\ }
+                         \\ pre::before {
+                         \\   content: attr(data-lang);
+                         \\   position: absolute;
+                         \\   top: 0.6rem;
+                         \\   right: 1rem;
+                         \\   font-size: 0.6rem;
+                         \\   letter-spacing: 0.15em;
+                         \\   text-transform: uppercase;
+                         \\   color: var(--text-dim);
+                         \\ }
+                         \\ pre code {
+                         \\   background: none;
+                         \\   border: none;
+                         \\   padding: 0;
+                         \\   font-size: 0.82rem;
+                         \\   line-height: 1.65;
+                         \\   color: var(--code-text);
+                         \\ }
+                         \\
+                         \\ blockquote {
+                         \\   border-left: 2px solid var(--accent);
+                         \\   padding: 0.8rem 1.5rem;
+                         \\   margin: 2rem 0;
+                         \\   background: var(--bg2);
+                         \\   font-family: var(--serif);
+                         \\   font-style: italic;
+                         \\   font-size: 1.05rem;
+                         \\   color: #c8c0ae;
+                         \\ }
+                         \\ blockquote p { margin-bottom: 0; }
+                         \\
+                         \\ ul {
+                         \\   list-style: none;
+                         \\   margin: 0 0 1.35rem 0;
+                         \\   padding: 0;
+                         \\ }
+                         \\ ul li {
+                         \\   padding-left: 1.4rem;
+                         \\   position: relative;
+                         \\   margin-bottom: 0.35rem;
+                         \\ }
+                         \\ ul li::before {
+                         \\   content: '–';
+                         \\   position: absolute;
+                         \\   left: 0;
+                         \\   color: var(--accent);
+                         \\ }
+                         \\
+                         \\ hr {
+                         \\   border: none;
+                         \\   border-top: 1px solid var(--border);
+                         \\   margin: 3.5rem 0;
+                         \\   position: relative;
+                         \\ }
+                         \\ hr::after {
+                         \\   content: '◆';
+                         \\   position: absolute;
+                         \\   top: 50%;
+                         \\   left: 50%;
+                         \\   transform: translate(-50%, -50%);
+                         \\   background: var(--bg);
+                         \\   color: var(--border);
+                         \\   padding: 0 0.75rem;
+                         \\   font-size: 0.55rem;
+                         \\ }
+                         \\
+                         \\ .footer {
+                         \\   margin-top: 6rem;
+                         \\   padding-top: 2rem;
+                         \\   border-top: 1px solid var(--border);
+                         \\   font-size: 0.7rem;
+                         \\   letter-spacing: 0.1em;
+                         \\   text-transform: uppercase;
+                         \\   color: var(--text-dim);
+                         \\ }
+                         \\
+                         \\ @keyframes fadeUp {
+                         \\   from { opacity: 0; transform: translateY(18px); }
+                         \\   to   { opacity: 1; transform: translateY(0); }
+                         \\ }
+                         \\ .container > * {
+                         \\   animation: fadeUp 0.55s ease both;
+                         \\ }
+                         \\ .container > *:nth-child(1) { animation-delay: 0.05s; }
+                         \\ .container > *:nth-child(2) { animation-delay: 0.12s; }
+                         \\ .container > *:nth-child(3) { animation-delay: 0.19s; }
+                         \\ .container > *:nth-child(4) { animation-delay: 0.26s; }
+                         \\ .container > *:nth-child(5) { animation-delay: 0.33s; }
+                         \\ .container > *:nth-child(n+6) { animation-delay: 0.38s; }
+
+val HTML_HEAD_3: ref u8 = \\ </style>
+                            \\ </head>
+                            \\ <body>
+                            \\   <header class="site-header">
+                            \\   </header>
+                            \\   <div class="container">
+                            \\     <div class="post-meta">
+
+val HTML_HEAD_4: ref u8 = \\     </div>
+
+val HTML_FOOT: ref u8   = \\     <footer class="footer">generated with <a href="https://github.com/navid-m/md2html">md2html</a></footer>
+                            \\   </div>
+                            \\ </body>
+                            \\ </html>
+
+
