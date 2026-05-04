@@ -192,11 +192,13 @@ fn render_inline(src: ref u8) ref void = {
                 if found_close != 0 {
                     val inner: ref u8 = trust string.substr(src, i + 1, found_close - (i + 1))
                     val escaped: ref void = html_escape(inner)
-                    trust @free(inner as ref void)
-                    trust string.StringBuilder.append_cstr(sb, "<em>")
-                    trust string.StringBuilder.append(sb, escaped)
-                    trust string.StringBuilder.append_cstr(sb, "</em>")
-                    trust @free(escaped)
+                    trust {
+                        @free(inner as ref void)
+                        string.StringBuilder.append_cstr(sb, "<em>")
+                        string.StringBuilder.append(sb, escaped)
+                        string.StringBuilder.append_cstr(sb, "</em>")
+                        @free(escaped)
+                    }
                     i = found_close + 1
                 } else {
                     trust string.StringBuilder.append_char(sb, c0)
