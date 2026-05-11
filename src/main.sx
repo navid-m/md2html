@@ -1,21 +1,21 @@
-val string = use("std/string")
-val fs     = use("std/fs")
-val stdio  = use("std/stdio")
-val hdata  = use("internal/html_data.sx")
+val string     = use("std/string")
+val fs         = use("std/fs")
+val allocators = use("std/allocators")
+val hdata      = use("internal/html_data.sx")
 
-extern (C) fn fopen(path: ref u8, mode: ref u8) ref void! = "fopen"
-extern (C) fn fclose(fp: ref void) i32! = "fclose"
-extern (C) fn fread(buf: ref void, size: usize, count: usize, fp: ref void) usize! = "fread"
-extern (C) fn fwrite(buf: ref void, size: usize, count: usize, fp: ref void) usize! = "fwrite"
-extern (C) fn fseek(fp: ref void, offset: i64, whence: i32) i32! = "fseek"
-extern (C) fn ftell(fp: ref void) i64! = "ftell"
-extern (C) fn rewind(fp: ref void) void! = "rewind"
-extern (C) fn exit(code: i32) void! = "exit"
-extern (C) fn fflush(fp: ref void) i32! = "fflush"
-extern (C) fn isdigit(c: i32) i32! = "isdigit"
-extern (C) fn stat(path: ref u8, buf: ref void) i32! = "stat"
-extern (C) fn localtime(timer: ref i64) ref void! = "localtime"
-extern (C) fn strftime(buf: ref u8, max: usize, fmt: ref u8, tm: ref void) usize! = "strftime"
+extern (C) fn fopen(path: ref u8, mode: ref u8) ref void = "fopen"
+extern (C) fn fclose(fp: ref void) i32 = "fclose"
+extern (C) fn fread(buf: ref void, size: usize, count: usize, fp: ref void) usize = "fread"
+extern (C) fn fwrite(buf: ref void, size: usize, count: usize, fp: ref void) usize = "fwrite"
+extern (C) fn fseek(fp: ref void, offset: i64, whence: i32) i32 = "fseek"
+extern (C) fn ftell(fp: ref void) i64 = "ftell"
+extern (C) fn rewind(fp: ref void) void = "rewind"
+extern (C) fn exit(code: i32) void = "exit"
+extern (C) fn fflush(fp: ref void) i32 = "fflush"
+extern (C) fn isdigit(c: i32) i32 = "isdigit"
+extern (C) fn stat(path: ref u8, buf: ref void) i32 = "stat"
+extern (C) fn localtime(timer: ref i64) ref void = "localtime"
+extern (C) fn strftime(buf: ref u8, max: usize, fmt: ref u8, tm: ref void) usize = "strftime"
 
 when linux {
     extern type Stat = {
@@ -437,7 +437,7 @@ fn slugify(src: ref u8) ref u8 = {
             trust string.StringBuilder.append_char(sb, c)
             prev_dash = 0
         } elif prev_dash == 0 {
-            trust string.StringBuilder.append_char(sb, 45)
+            trust string.StringBuilder.append_char(sb, 45 as u8)
             prev_dash = 1
         }
         i++
@@ -848,7 +848,7 @@ fn make_title(path: ref u8) ref u8 = {
             some v => { c = v }
         }
         if c == 45 {  // '-'
-            trust string.StringBuilder.append_char(sb, 32)  // ' '
+            trust string.StringBuilder.append_char(sb, 32 as u8)  // ' '
         } else {
             trust string.StringBuilder.append_char(sb, c)
         }
@@ -959,6 +959,8 @@ fn ends_with_md(name: ref u8) bool = {
 }
 
 fn run_all(out_path: ref u8) void = {
+    val arena: allocators.Arena = trust allocators.Arena.new(1024 as usize)?
+
     if out_path != none {
         val fp: ref void = trust fopen(out_path, "w")
         if fp == none {
@@ -968,13 +970,13 @@ fn run_all(out_path: ref u8) void = {
         g_outfp = fp
     }
 
-    val cwd_opt = fs.cwd()
+    val cwd_opt = trust fs.cwd[allocators.Arena](arena)
     val cwd_str: mut ref u8 = "."
     if cwd_opt is some v {
         cwd_str = v
     }
 
-    val entries_opt = trust fs.walk_dir(cwd_str)
+    val entries_opt = trust fs.walk_dir[allocators.Arena](arena, cwd_str)
     val all_md: mut list[ref u8] = []
 
     match entries_opt {

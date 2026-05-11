@@ -22,7 +22,7 @@ val HTML_CSS: ref u8 =   \\ *, *::before, *::after { box-sizing: border-box; mar
                          \\   --text-dim:  #7a7670;
                          \\   --accent:    #c9a96e;
                          \\   --accent2:   #7eb8c9;
-                         \\   --accent3:   #a87fc0;
+                         \\   --accent3:   #ffffff;
                          \\   --code-bg:   #111118;
                          \\   --code-text: #b8d4a8;
                          \\   --serif:     'Instrument Serif', 'Libre Baskerville', Georgia, serif;
